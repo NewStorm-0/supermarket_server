@@ -5,16 +5,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@TableName("user")
+@TableName("commodity")
 @Data
-public class User {
+public class Commodity {
     @TableId(type = IdType.AUTO)
-    private Integer account;
-    private String password;
+    private Integer id;
     private String name;
-    private String mobilePhone;
-    private String identityNumber;
-    private Double balance;
-    private Integer rewardPoints;
-    private Integer level;
+    private Double initialPrice;
+    private Double silverPrice;
+    private Double goldPrice;
+    private Double platinumPrice;
+    private Double specialPrice;
 }

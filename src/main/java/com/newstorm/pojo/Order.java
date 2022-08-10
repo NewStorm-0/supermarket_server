@@ -5,16 +5,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@TableName("user")
+import java.sql.Date;
+
+@TableName("order")
 @Data
-public class User {
+public class Order {
     @TableId(type = IdType.AUTO)
-    private Integer account;
-    private String password;
-    private String name;
-    private String mobilePhone;
-    private String identityNumber;
-    private Double balance;
+    private Integer id;
+    private Integer userId;
     private Integer rewardPoints;
-    private Integer level;
+    private Date time;
+    private String couponInfo;
 }

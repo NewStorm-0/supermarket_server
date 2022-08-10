@@ -3,6 +3,8 @@ package com.newstorm.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newstorm.common.JsonResult;
+import com.newstorm.exception.SqlDataErrorException;
+import com.newstorm.exception.UserNotFoundException;
 import com.newstorm.mapper.UserMapper;
 import com.newstorm.pojo.User;
 import com.newstorm.service.UserService;
@@ -18,7 +20,7 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
-    public JsonResult login(Integer account, String password) {
+    public User login(Integer account, String password) {
         if (!(StringUtils.isBlank(password) || account == null)) {
             Map<String, Object> conditions = new HashMap<>(2);
             conditions.put("account", account);
@@ -28,12 +30,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 users.forEach(System.out::println);
                 if (users.size() > 1) {
                     log.warn("登录异常：查询到的账户大于一个");
-                    return new JsonResult("后台数据库错误");
+                    throw new SqlDataErrorException("后台数据库错误");
                 }
                 users.get(0).setPassword(null);
-                return new JsonResult(users.get(0));
+                return users.get(0);
             }
         }
-        return new JsonResult("卡号或密码错误");
+        return null;
+//        throw new UserNotFoundException("卡号或密码错误");
     }
 }

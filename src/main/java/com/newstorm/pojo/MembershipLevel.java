@@ -5,16 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@TableName("user")
+@TableName("membership_level")
 @Data
-public class User {
+public class MembershipLevel {
     @TableId(type = IdType.AUTO)
-    private Integer account;
-    private String password;
+    private Integer type;
     private String name;
-    private String mobilePhone;
-    private String identityNumber;
-    private Double balance;
-    private Integer rewardPoints;
-    private Integer level;
+    private Double requiredAmount;
+    private Double discount;
 }
