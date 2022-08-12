@@ -2,7 +2,8 @@ package com.newstorm.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.newstorm.common.JsonResult;
+import com.newstorm.common.HmacUtils;
+import com.newstorm.exception.BaseException;
 import com.newstorm.exception.SqlDataErrorException;
 import com.newstorm.exception.UserNotFoundException;
 import com.newstorm.mapper.UserMapper;
@@ -22,9 +23,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User login(Integer account, String password) {
         if (!(StringUtils.isBlank(password) || account == null)) {
+            String processedPassword;
+            try {
+                processedPassword = HmacUtils.encrypt(password);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new BaseException(e.getMessage());
+            }
             Map<String, Object> conditions = new HashMap<>(2);
             conditions.put("account", account);
-            conditions.put("password", password);
+            conditions.put("password", processedPassword);
             List<User> users = getBaseMapper().selectByMap(conditions);
             if (users.size() > 0) {
                 users.forEach(System.out::println);
@@ -36,7 +44,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 return users.get(0);
             }
         }
-        return null;
-//        throw new UserNotFoundException("卡号或密码错误");
+        throw new UserNotFoundException("卡号或密码错误");
     }
 }

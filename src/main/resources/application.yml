@@ -8,6 +8,15 @@ spring:
     ansi:
       enabled: detect
 
+# server:
+#   ssl:
+#     enabled: true  #开启证书验证
+#     key-store: classpath:supermarket_server.keystore  #类路径下的自签证书
+#     key-alias: supermarket_server  #证书别名
+#     key-store-password: 2456601397  #证书密码
+#     key-store-type: PKCS12  #证书类型
+#     key-password: 2456601397
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

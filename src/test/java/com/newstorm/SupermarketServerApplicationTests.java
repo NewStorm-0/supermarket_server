@@ -1,5 +1,6 @@
 package com.newstorm;
 
+import com.newstorm.common.HmacUtils;
 import com.newstorm.mapper.UserMapper;
 import com.newstorm.pojo.MembershipLevel;
 import com.newstorm.pojo.User;

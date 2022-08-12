@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### 证书/密匙 ###
+*.keystore
