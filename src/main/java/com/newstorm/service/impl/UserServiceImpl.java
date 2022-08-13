@@ -53,4 +53,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         throw new UserNotFoundException("卡号或密码错误");
     }
+
+    @Override
+    public Map<String, Integer> register(User user) {
+        try {
+            user.setPassword(HmacUtils.encrypt(user.getPassword()));
+            save(user);
+            log.info("Register new user: " + user);
+            Map<String, Integer> map = new HashMap<>(1);
+            map.put("password", user.getAccount());
+            return map;
+        } catch (Exception e) {
+            throw new BaseException(e.getMessage());
+        }
+    }
 }

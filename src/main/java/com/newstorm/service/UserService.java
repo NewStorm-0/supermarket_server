@@ -8,4 +8,5 @@ import java.util.Map;
 public interface UserService extends IService<User> {
 
     Map<String, Object> login(Integer account, String password);
+    Map<String, Integer> register(User user);
 }

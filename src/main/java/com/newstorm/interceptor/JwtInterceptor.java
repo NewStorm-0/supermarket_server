@@ -34,7 +34,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         // KEY加签验证 token
         try {
             DecodedJWT decodedJWT = JwtUtils.verify(token);
-            System.out.println("The token will expire at " + decodedJWT.getExpiresAt());
+            log.info("The token will expire at " + decodedJWT.getExpiresAt());
         } catch (SignatureVerificationException e) {
             throw new JwtException("无效签名！");
         } catch (TokenExpiredException e) {
