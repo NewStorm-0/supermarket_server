@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,9 +28,10 @@ public class UserController {
     @PostMapping("/login")
     public JsonResult login(@RequestBody Map<String, Object> parameters) {
         parameters.forEach((k, v) -> log.info("Key: " + k + " Value: " + v));
-        User user = userService.login(Integer.valueOf((String) parameters.get("account")),
+        Map<String, Object> map = userService.login(
+                Integer.valueOf((String) parameters.get("account")),
                 (String) parameters.get("password"));
-        return new JsonResult(user);
+        return new JsonResult(map);
 
     }
 }

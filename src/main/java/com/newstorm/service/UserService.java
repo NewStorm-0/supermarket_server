@@ -3,6 +3,9 @@ package com.newstorm.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.newstorm.pojo.User;
 
+import java.util.Map;
+
 public interface UserService extends IService<User> {
-    User login(Integer account, String password);
+
+    Map<String, Object> login(Integer account, String password);
 }

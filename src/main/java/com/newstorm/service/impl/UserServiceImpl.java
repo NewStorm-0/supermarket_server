@@ -3,6 +3,7 @@ package com.newstorm.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newstorm.common.HmacUtils;
+import com.newstorm.common.JwtUtils;
 import com.newstorm.exception.BaseException;
 import com.newstorm.exception.SqlDataErrorException;
 import com.newstorm.exception.UserNotFoundException;
@@ -12,6 +13,7 @@ import com.newstorm.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,7 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
-    public User login(Integer account, String password) {
+    public Map<String, Object> login(Integer account, String password) {
         if (!(StringUtils.isBlank(password) || account == null)) {
             String processedPassword;
             try {
@@ -40,8 +42,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     log.warn("登录异常：查询到的账户大于一个");
                     throw new SqlDataErrorException("后台数据库错误");
                 }
-                users.get(0).setPassword(null);
-                return users.get(0);
+                User temp = users.get(0);
+                temp.setPassword(null);
+                String authorization = JwtUtils.getToken(temp);
+                Map<String, Object> map = new HashMap<>(2);
+                map.put("user", temp);
+                map.put("authorization", authorization);
+                return map;
             }
         }
         throw new UserNotFoundException("卡号或密码错误");
