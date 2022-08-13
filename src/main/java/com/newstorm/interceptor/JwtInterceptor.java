@@ -21,16 +21,16 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String jwt = request.getHeader(JwtUtils.AUTH_HEADER_KEY);
-        String token = jwt.substring(JwtUtils.TOKEN_PREFIX.length());
         log.info(jwt);
         // 如果不是映射到方法直接通过
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
         // 执行认证
-        if (StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(jwt)) {
             throw new JwtException("token为空，请重新登录");
         }
+        String token = jwt.substring(JwtUtils.TOKEN_PREFIX.length());
         // KEY加签验证 token
         try {
             DecodedJWT decodedJWT = JwtUtils.verify(token);
