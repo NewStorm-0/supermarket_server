@@ -11,4 +11,5 @@ public interface UserService extends IService<User> {
     Map<String, Integer> register(User user);
     boolean changePassword(Integer account, String oldPassword, String newPassword);
     boolean recharge(Integer account, Double amount);
+    boolean redeem(Integer account, Integer couponType, Integer number);
 }

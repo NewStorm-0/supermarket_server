@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class UserCoupon {
     @TableId(type = IdType.AUTO)
+    private Integer id;
     private Integer userId;
     private Integer couponType;
     private Integer quantity;
