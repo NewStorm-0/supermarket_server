@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @TableName("order")
 @Data
@@ -14,6 +14,6 @@ public class Order {
     private Integer id;
     private Integer userId;
     private Integer rewardPoints;
-    private Date time;
+    private LocalDateTime time;
     private String couponInfo;
 }

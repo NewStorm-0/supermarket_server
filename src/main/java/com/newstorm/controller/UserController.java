@@ -1,6 +1,7 @@
 package com.newstorm.controller;
 
 import com.newstorm.common.JsonResult;
+import com.newstorm.common.JwtUtils;
 import com.newstorm.exception.BaseException;
 import com.newstorm.pojo.User;
 import com.newstorm.service.UserService;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,13 @@ import java.util.Map;
 @RequestMapping("/user")
 @Slf4j
 public class UserController {
+
+    private HttpServletRequest request;
+
+    @Autowired
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
 
     UserService userService;
 
@@ -44,5 +53,22 @@ public class UserController {
     @PostMapping("/register")
     public JsonResult register(@RequestBody User user) {
         return new JsonResult(userService.register(user));
+    }
+
+    @PostMapping("/change_password")
+    public JsonResult changePassword(@RequestBody Map<String, String> parameters) {
+        Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
+        return userService.changePassword(
+                account,
+                parameters.get("oldPassword"),
+                parameters.get("newPassword")
+        ) ? JsonResult.success() : new JsonResult("原密码输入错误");
+    }
+
+    @PostMapping("/recharge")
+    public JsonResult recharge(@RequestBody Map<String, Double> amount) {
+        Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
+        return userService.recharge(account, amount.get("amount")) ?
+                JsonResult.success() : new JsonResult("充值失败");
     }
 }

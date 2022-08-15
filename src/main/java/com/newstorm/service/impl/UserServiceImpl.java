@@ -1,5 +1,7 @@
 package com.newstorm.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newstorm.common.HmacUtils;
@@ -8,12 +10,16 @@ import com.newstorm.exception.BaseException;
 import com.newstorm.exception.SqlDataErrorException;
 import com.newstorm.exception.UserNotFoundException;
 import com.newstorm.mapper.UserMapper;
+import com.newstorm.pojo.Charge;
 import com.newstorm.pojo.User;
+import com.newstorm.service.ChargeService;
 import com.newstorm.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +27,12 @@ import java.util.Map;
 @Service
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+    ChargeService chargeService;
+
+    @Autowired
+    public void setChargeService(ChargeService chargeService) {
+        this.chargeService = chargeService;
+    }
 
     @Override
     public Map<String, Object> login(Integer account, String password) {
@@ -61,10 +73,47 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             save(user);
             log.info("Register new user: " + user);
             Map<String, Integer> map = new HashMap<>(1);
-            map.put("password", user.getAccount());
+            map.put("account", user.getAccount());
             return map;
         } catch (Exception e) {
             throw new BaseException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean changePassword(Integer account, String oldPassword, String newPassword) {
+        try {
+            oldPassword = HmacUtils.encrypt(oldPassword);
+            newPassword = HmacUtils.encrypt(newPassword);
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("account", account)
+                    .eq("password", oldPassword);
+            updateWrapper.set("password", newPassword);
+            return update(updateWrapper);
+        } catch (Exception e) {
+            throw new BaseException(e.getMessage());
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public boolean recharge(Integer account, Double amount) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("account", account).select("balance");
+        List<Map<String, Object>> list = listMaps(queryWrapper);
+        Double balance = (Double) list.get(0).get("balance");
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("account", account)
+                .set("balance", amount + balance);
+        if (update(updateWrapper)) {
+            Charge charge = new Charge();
+            charge.setUserId(account);
+            charge.setAmount(amount);
+            charge.setTime(LocalDateTime.now());
+            return chargeService.save(charge);
+        } else {
+            return false;
         }
     }
 }

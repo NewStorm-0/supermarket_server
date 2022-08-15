@@ -42,12 +42,14 @@ public class JwtUtils {
     /**
      * 验证token合法性
      */
-    public static DecodedJWT verify(String token) throws JwtException {
+    public static DecodedJWT verify(String jwt) throws JwtException {
+        String token = jwt.substring(JwtUtils.TOKEN_PREFIX.length());
         JWTVerifier build = JWT.require(Algorithm.HMAC256(SECRET)).build();
         return build.verify(token);
     }
 
-    public static Map<String, Object> getInformation(DecodedJWT decodedJWT) {
+    public static Map<String, Object> getInformation(String jwt) {
+        DecodedJWT decodedJWT = verify(jwt);
         Claim userAccount = decodedJWT.getClaim("userAccount");
         Claim userName = decodedJWT.getClaim("userName");
         Map<String, Object> map = new HashMap<>(2);
@@ -57,7 +59,8 @@ public class JwtUtils {
         return  map;
     }
 
-    public static Integer getUserAccount(DecodedJWT decodedJWT) {
+    public static Integer getUserAccount(String jwt) {
+        DecodedJWT decodedJWT = verify(jwt);
         Claim userAccount = decodedJWT.getClaim("userAccount");
         return userAccount.asInt();
     }

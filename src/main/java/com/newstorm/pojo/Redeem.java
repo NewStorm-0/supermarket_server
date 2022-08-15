@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @TableName("Redeem")
 @Data
@@ -16,5 +16,5 @@ public class Redeem {
     private Integer couponType;
     private Integer number;
     private Integer userId;
-    private Date time;
+    private LocalDateTime time;
 }

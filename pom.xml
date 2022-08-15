@@ -16,6 +16,8 @@
     <description>supermarket_server</description>
     <properties>
         <java.version>17</java.version>
+        <!-- 跳过 test -->
+        <skipTests>true</skipTests>
     </properties>
     <dependencies>
 

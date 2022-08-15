@@ -30,10 +30,9 @@ public class JwtInterceptor implements HandlerInterceptor {
         if (StringUtils.isEmpty(jwt)) {
             throw new JwtException("token为空，请重新登录");
         }
-        String token = jwt.substring(JwtUtils.TOKEN_PREFIX.length());
         // KEY加签验证 token
         try {
-            DecodedJWT decodedJWT = JwtUtils.verify(token);
+            DecodedJWT decodedJWT = JwtUtils.verify(jwt);
             log.info("The token will expire at " + decodedJWT.getExpiresAt());
         } catch (SignatureVerificationException e) {
             throw new JwtException("无效签名！");

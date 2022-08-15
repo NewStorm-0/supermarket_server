@@ -21,7 +21,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")  // 拦截所有请求，通过判断是否有token注解决定是否需要登录
                 .excludePathPatterns(   //添加不拦截路径
                         "/user/login",
-                        "/user/register"
+                        "/user/register",
+                        "/membership_level/all"
                 );
     }
 }
