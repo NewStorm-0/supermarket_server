@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newstorm.mapper.CommodityMapper;
 import com.newstorm.pojo.Commodity;
-import com.newstorm.pojo.dto.CommodityDto;
+import com.newstorm.pojo.dto.CommodityDTO;
 import com.newstorm.service.CommodityService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +15,13 @@ import java.util.Map;
 @Service
 public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity> implements CommodityService {
     @Override
-    public double calculatePrice(List<CommodityDto> commodityDtoList) {
+    public double calculatePrice(List<CommodityDTO> commodityDTOList) {
         double price = 0.00D;
         QueryWrapper<Commodity> queryWrapper = new QueryWrapper<>();
-        for (CommodityDto commodityDto : commodityDtoList) {
-            queryWrapper.eq("id", commodityDto.getCommodityId())
+        for (CommodityDTO commodityDTO : commodityDTOList) {
+            queryWrapper.eq("id", commodityDTO.getCommodityId())
                     .select("price");
-            price += (Integer) getMap(queryWrapper).get("price") * commodityDto.getNumber();
+            price += (Integer) getMap(queryWrapper).get("price") * commodityDTO.getNumber();
             queryWrapper.clear();
         }
         return price;

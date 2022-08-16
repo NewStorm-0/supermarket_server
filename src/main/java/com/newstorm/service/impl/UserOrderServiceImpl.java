@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newstorm.exception.BaseException;
 import com.newstorm.mapper.UserOrderMapper;
 import com.newstorm.pojo.*;
-import com.newstorm.pojo.dto.CommodityDto;
-import com.newstorm.pojo.dto.OrderDto;
+import com.newstorm.pojo.dto.CommodityDTO;
+import com.newstorm.pojo.dto.OrderDTO;
 import com.newstorm.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,17 +59,17 @@ public class UserOrderServiceImpl extends ServiceImpl<UserOrderMapper, UserOrder
 
     @Override
     @Transactional
-    public Map<String, Object> checkout(Integer account, OrderDto orderDto) {
+    public Map<String, Object> checkout(Integer account, OrderDTO orderDTO) {
         double finalPrice;
         String couponInfo = null;
         // 计算订单商品的总初始价格
         double price = 0.00D;
         Map<Integer, Double> priceMap =  // 后续向 order_commodity 表插入数据需要用到
-                new HashMap<>(orderDto.getCommodityDtoList().size());
-        for (CommodityDto commodityDto : orderDto.getCommodityDtoList()) {
-            double commodityPrice = commodityService.getPrice(commodityDto.getCommodityId());
-            priceMap.put(commodityDto.getCommodityId(), commodityPrice);
-            price += commodityPrice * commodityDto.getNumber();
+                new HashMap<>(orderDTO.getCommodityDTOList().size());
+        for (CommodityDTO commodityDTO : orderDTO.getCommodityDTOList()) {
+            double commodityPrice = commodityService.getPrice(commodityDTO.getCommodityId());
+            priceMap.put(commodityDTO.getCommodityId(), commodityPrice);
+            price += commodityPrice * commodityDTO.getNumber();
         }
         // 计算订单返还的积分
         int points = (int) (price * REWARD_POINTS_RETURN_RATE);
@@ -78,9 +78,9 @@ public class UserOrderServiceImpl extends ServiceImpl<UserOrderMapper, UserOrder
         // 查询会员对应的折扣
         double discount = membershipLevelService.getDiscount(user.getLevel());
 
-        if (orderDto.getCouponType() != null) {
+        if (orderDTO.getCouponType() != null) {
             // 若使用满减券，查询使用的满减券
-            Coupon coupon = couponService.getById(orderDto.getCouponType());
+            Coupon coupon = couponService.getById(orderDTO.getCouponType());
             if (price > coupon.getLowestAmount()) {
                 // 可以使用满减券
                 finalPrice = price * discount - coupon.getReliefAmount();
@@ -116,13 +116,13 @@ public class UserOrderServiceImpl extends ServiceImpl<UserOrderMapper, UserOrder
         }
         // 插入 order_commodity 表信息
         List<OrderCommodity> orderCommodityList = new ArrayList<>();
-        for (CommodityDto commodityDto : orderDto.getCommodityDtoList()) {
+        for (CommodityDTO commodityDTO : orderDTO.getCommodityDTOList()) {
             OrderCommodity orderCommodity = new OrderCommodity();
             orderCommodity.setOrderId(userOrder.getId());
-            orderCommodity.setCommodityId(commodityDto.getCommodityId());
-            orderCommodity.setQuantity(commodityDto.getNumber());
-            orderCommodity.setOriginalPrice(priceMap.get(commodityDto.getCommodityId()));
-            orderCommodity.setActualPrice(priceMap.get(commodityDto.getCommodityId()) * discount);
+            orderCommodity.setCommodityId(commodityDTO.getCommodityId());
+            orderCommodity.setQuantity(commodityDTO.getNumber());
+            orderCommodity.setOriginalPrice(priceMap.get(commodityDTO.getCommodityId()));
+            orderCommodity.setActualPrice(priceMap.get(commodityDTO.getCommodityId()) * discount);
             orderCommodityList.add(orderCommodity);
         }
         if (!orderCommodityService.saveBatch(orderCommodityList)) {

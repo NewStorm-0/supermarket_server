@@ -4,8 +4,8 @@ import com.newstorm.common.JsonResult;
 import com.newstorm.common.JwtUtils;
 import com.newstorm.pojo.OrderCommodity;
 import com.newstorm.pojo.UserOrder;
-import com.newstorm.pojo.dto.CheckoutDto;
-import com.newstorm.pojo.dto.OrderDto;
+import com.newstorm.pojo.dto.CheckoutDTO;
+import com.newstorm.pojo.dto.OrderDTO;
 import com.newstorm.service.OrderCommodityService;
 import com.newstorm.service.UserOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +43,14 @@ public class UserOrderController {
     /**
      * 结账产生订单
      *
-     * @param checkoutDto 包含满减券以及商品信息
+     * @param checkoutDTO 包含满减券以及商品信息
      * @return 结账信息，包含花费与积分
      */
     @PostMapping("/checkout")
-    public JsonResult checkout(@RequestBody CheckoutDto checkoutDto) {
-        Integer account = checkoutDto.getAccount();
-        OrderDto orderDto = checkoutDto.getOrder();
-        return new JsonResult(userOrderService.checkout(account, orderDto));
+    public JsonResult checkout(@RequestBody CheckoutDTO checkoutDTO) {
+        Integer account = checkoutDTO.getAccount();
+        OrderDTO orderDTO = checkoutDTO.getOrder();
+        return new JsonResult(userOrderService.checkout(account, orderDTO));
     }
 
     /**

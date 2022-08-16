@@ -1,12 +1,11 @@
 package com.newstorm.pojo.dto;
 
-import com.newstorm.pojo.Coupon;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class OrderDto {
-    private List<CommodityDto> commodityDtoList;
+public class OrderDTO {
+    private List<CommodityDTO> commodityDTOList;
     private Integer couponType;
 }

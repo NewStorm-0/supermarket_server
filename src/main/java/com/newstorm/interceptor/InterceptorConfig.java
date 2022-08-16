@@ -23,7 +23,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         "/user/login",
                         "/user/register",
                         "/membership_level/all",
-                        "/order/checkout"
+                        "/order/checkout",
+                        "/administrator/login"
                 );
     }
 }

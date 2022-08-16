@@ -7,10 +7,12 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.newstorm.exception.JwtException;
+import com.newstorm.pojo.Administrator;
 import com.newstorm.pojo.User;
 
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,18 @@ public class JwtUtils {
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
+    public static String getAdministratorToken(Administrator administrator) {
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.MINUTE, 30);
+
+        JWTCreator.Builder builder = JWT.create();
+        builder.withClaim("administratorAccount", administrator.getAccount())
+                .withClaim("creationTime", new Date());
+
+        return builder.withExpiresAt(instance.getTime())
+                .sign(Algorithm.HMAC256(SECRET));
+    }
+
     /**
      * 验证token合法性
      */
@@ -54,7 +68,7 @@ public class JwtUtils {
         map.put("userAccount", userAccount.asInt());
         map.put("userLevel", userName.asString());
         map.put("overtimeTime", decodedJWT.getExpiresAt());
-        return  map;
+        return map;
     }
 
     public static Integer getUserAccount(String jwt) {
@@ -68,4 +82,11 @@ public class JwtUtils {
         Claim userLevel = decodedJWT.getClaim("userLevel");
         return userLevel.asInt();
     }
+
+    public static boolean isAdministrator(String jwt) {
+        DecodedJWT decodedJWT = verify(jwt);
+        Claim administratorAccount = decodedJWT.getClaim("administratorAccount");
+        return administratorAccount.asString() != null;
+    }
+
 }

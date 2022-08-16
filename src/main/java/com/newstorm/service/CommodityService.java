@@ -2,13 +2,13 @@ package com.newstorm.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.newstorm.pojo.Commodity;
-import com.newstorm.pojo.dto.CommodityDto;
+import com.newstorm.pojo.dto.CommodityDTO;
 
 import java.util.List;
 import java.util.Map;
 
 public interface CommodityService extends IService<Commodity> {
-    double calculatePrice(List<CommodityDto> commodityDtoList);
+    double calculatePrice(List<CommodityDTO> commodityDTOList);
 
     /**
      * 批量获取商品单价

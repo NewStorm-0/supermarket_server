@@ -77,9 +77,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 map.put("user", temp);
                 map.put("authorization", authorization);
                 return map;
+            } else {
+                throw new UserNotFoundException("卡号或吗密码错误");
             }
         }
-        throw new UserNotFoundException("卡号或密码错误");
+        throw new BaseException("卡号或密码不可为空白");
     }
 
     @Override

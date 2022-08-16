@@ -3,7 +3,7 @@ package com.newstorm.pojo.dto;
 import lombok.Data;
 
 @Data
-public class CheckoutDto {
+public class CheckoutDTO {
     private Integer account;
-    private OrderDto order;
+    private OrderDTO order;
 }
