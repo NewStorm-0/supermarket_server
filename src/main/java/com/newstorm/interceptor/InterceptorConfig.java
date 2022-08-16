@@ -22,7 +22,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns(   //添加不拦截路径
                         "/user/login",
                         "/user/register",
-                        "/membership_level/all"
+                        "/membership_level/all",
+                        "/order/checkout"
                 );
     }
 }

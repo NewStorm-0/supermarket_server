@@ -5,4 +5,5 @@ import com.newstorm.common.JsonResult;
 import com.newstorm.pojo.MembershipLevel;
 
 public interface MembershipLevelService extends IService<MembershipLevel> {
+    Double getDiscount(Integer level);
 }

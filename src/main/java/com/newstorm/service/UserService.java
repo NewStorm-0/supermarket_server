@@ -12,4 +12,6 @@ public interface UserService extends IService<User> {
     boolean changePassword(Integer account, String oldPassword, String newPassword);
     boolean recharge(Integer account, Double amount);
     boolean redeem(Integer account, Integer couponType, Integer number);
+    boolean deductBalance(Integer account, Double amount);
+    boolean addRewardPoints(Integer account, Integer points);
 }

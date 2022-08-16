@@ -9,6 +9,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import com.newstorm.exception.BaseException;
 import com.newstorm.exception.JwtException;
 import com.newstorm.pojo.User;
+import kotlin.UByte;
 
 
 import java.util.Calendar;
@@ -33,7 +34,7 @@ public class JwtUtils {
 
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("userAccount", user.getAccount())
-                .withClaim("userName", user.getName());
+                .withClaim("userLevel", user.getLevel());
 
         return builder.withExpiresAt(instance.getTime())
                 .sign(Algorithm.HMAC256(SECRET));
@@ -51,10 +52,10 @@ public class JwtUtils {
     public static Map<String, Object> getInformation(String jwt) {
         DecodedJWT decodedJWT = verify(jwt);
         Claim userAccount = decodedJWT.getClaim("userAccount");
-        Claim userName = decodedJWT.getClaim("userName");
+        Claim userName = decodedJWT.getClaim("userLevel");
         Map<String, Object> map = new HashMap<>(2);
         map.put("userAccount", userAccount.asInt());
-        map.put("userName", userName.asString());
+        map.put("userLevel", userName.asString());
         map.put("overtimeTime", decodedJWT.getExpiresAt());
         return  map;
     }
@@ -63,5 +64,11 @@ public class JwtUtils {
         DecodedJWT decodedJWT = verify(jwt);
         Claim userAccount = decodedJWT.getClaim("userAccount");
         return userAccount.asInt();
+    }
+
+    public static Integer getUserLevel(String jwt) {
+        DecodedJWT decodedJWT = verify(jwt);
+        Claim userLevel = decodedJWT.getClaim("userLevel");
+        return userLevel.asInt();
     }
 }

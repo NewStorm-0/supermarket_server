@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class OrderCommodity {
     @TableId(type = IdType.AUTO)
+    private Integer id;
     private Integer orderId;
     private Integer commodityId;
     private Integer quantity;

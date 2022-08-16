@@ -11,9 +11,5 @@ public class Commodity {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String name;
-    private Double initialPrice;
-    private Double silverPrice;
-    private Double goldPrice;
-    private Double platinumPrice;
-    private Double specialPrice;
+    private Double price;
 }

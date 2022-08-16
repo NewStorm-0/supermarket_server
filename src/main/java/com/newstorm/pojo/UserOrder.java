@@ -7,9 +7,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@TableName("order")
+@TableName("user_order")
 @Data
-public class Order {
+public class UserOrder {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer userId;
