@@ -6,14 +6,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.newstorm.exception.BaseException;
 import com.newstorm.exception.JwtException;
 import com.newstorm.pojo.User;
-import kotlin.UByte;
 
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +25,7 @@ public class JwtUtils {
      * @param user 信息
      * @return token
      */
-    public static String getToken(User user) {
+    public static String getUserToken(User user) {
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.HOUR, 4);
 
@@ -49,7 +46,7 @@ public class JwtUtils {
         return build.verify(token);
     }
 
-    public static Map<String, Object> getInformation(String jwt) {
+    public static Map<String, Object> getUserInformation(String jwt) {
         DecodedJWT decodedJWT = verify(jwt);
         Claim userAccount = decodedJWT.getClaim("userAccount");
         Claim userName = decodedJWT.getClaim("userLevel");

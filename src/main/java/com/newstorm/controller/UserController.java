@@ -106,6 +106,6 @@ public class UserController {
                              @RequestParam("number") Integer number) {
         Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
         return userService.redeem(account, couponType, number) ?
-                JsonResult.success() : new JsonResult("兑换失败");
+                JsonResult.success() : new JsonResult("兑换失败：积分不足");
     }
 }

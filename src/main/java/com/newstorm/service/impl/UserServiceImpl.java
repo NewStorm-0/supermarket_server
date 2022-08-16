@@ -72,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 }
                 User temp = users.get(0);
                 temp.setPassword(null);
-                String authorization = JwtUtils.getToken(temp);
+                String authorization = JwtUtils.getUserToken(temp);
                 Map<String, Object> map = new HashMap<>(2);
                 map.put("user", temp);
                 map.put("authorization", authorization);
@@ -102,8 +102,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             oldPassword = HmacUtils.encrypt(oldPassword);
             newPassword = HmacUtils.encrypt(newPassword);
             UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("account", account)
-                    .eq("password", oldPassword);
+            updateWrapper.eq("account", account).eq("password", oldPassword);
             updateWrapper.set("password", newPassword);
             return update(updateWrapper);
         } catch (Exception e) {
@@ -120,8 +119,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<Map<String, Object>> list = listMaps(queryWrapper);
         Double balance = (Double) list.get(0).get("balance");
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("account", account)
-                .set("balance", amount + balance);
+        updateWrapper.eq("account", account).set("balance", amount + balance);
         if (update(updateWrapper)) {
             Charge charge = new Charge();
             charge.setUserId(account);
@@ -138,51 +136,56 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean redeem(Integer account, Integer couponType, Integer number) {
         // 查询会员积分
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("account", account)
-                .select("reward_points");
+        queryWrapper.eq("account", account).select("reward_points");
         Map<String, Object> map = getMap(queryWrapper);
         Integer rewardPoints = (Integer) map.get("reward_points");
 
         // 查询兑换的满减券所需要的积分并且根据数量计算出总共需要的积分
         QueryWrapper<Coupon> couponQueryWrapper = new QueryWrapper<>();
-        couponQueryWrapper.eq("type", couponType)
-                .select("cost");
+        couponQueryWrapper.eq("type", couponType).select("cost");
         map = couponService.getMap(couponQueryWrapper);
         Integer costRewardPoints = (Integer) map.get("cost") * number;
 
         // 判断会员的积分是否足够兑换满减券
         if (rewardPoints >= costRewardPoints) {
             // 当足够兑换时，先在 user_coupon 中查找会员对应满减券的数量，然后加上兑换的数量，
-            // 若没有记录则新建一条。 saveOrUpdate 方法可以方便的实现该功能
+            // 若没有记录则新建一条
 
-            // 更新条件，saveOrUpdate(T entity, Wrapper<T> updateWrapper)
+            // 更新条件
             UpdateWrapper<UserCoupon> userCouponUpdateWrapper = new UpdateWrapper<>();
             userCouponUpdateWrapper.eq("user_id", account)
                     .eq("coupon_type", couponType)
                     .setSql("quantity = quantity + " + number);
-            // 若更新失败，则将 entity 插入。以下为 entity
-            UserCoupon userCoupon = new UserCoupon();
-            userCoupon.setUserId(account);
-            userCoupon.setCouponType(couponType);
-            userCoupon.setQuantity(number);
-            if (userCouponService.saveOrUpdate(userCoupon, userCouponUpdateWrapper)) {
-
-                // 减少 user 表中会员的积分
-                UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-                updateWrapper.eq("account", account)
-                        .set("reward_points", rewardPoints - costRewardPoints);
-
-                if (update(updateWrapper)) {
-
-                    // 向 redeem 表中插入兑换记录
-                    Redeem redeem = new Redeem();
-                    redeem.setUserId(account);
-                    redeem.setCouponType(couponType);
-                    redeem.setNumber(number);
-                    redeem.setValue(costRewardPoints);
-                    redeem.setTime(LocalDateTime.now());
-                    return redeemService.save(redeem);
+            if (!userCouponService.update(userCouponUpdateWrapper)) {
+                // 若更新失败，则将 entity 插入。以下为 entity
+                UserCoupon userCoupon = new UserCoupon();
+                userCoupon.setUserId(account);
+                userCoupon.setCouponType(couponType);
+                userCoupon.setQuantity(number);
+                if (!userCouponService.save(userCoupon)) {
+                    throw new BaseException("兑换失败：增加会员满减券数量失败");
                 }
+            }
+            // 减少 user 表中会员的积分
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("account", account)
+                    .set("reward_points", rewardPoints - costRewardPoints);
+
+            if (update(updateWrapper)) {
+                // 向 redeem 表中插入兑换记录
+                Redeem redeem = new Redeem();
+                redeem.setUserId(account);
+                redeem.setCouponType(couponType);
+                redeem.setNumber(number);
+                redeem.setValue(costRewardPoints);
+                redeem.setTime(LocalDateTime.now());
+                if (redeemService.save(redeem)) {
+                    return true;
+                } else {
+                    throw new BaseException("兑换失败：兑换记录存储失败");
+                }
+            } else {
+                throw new BaseException("兑换失败：扣除会员积分失败");
             }
         }
         return false;
@@ -191,17 +194,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean deductBalance(Integer account, Double amount) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("account", account)
-                .ge("balance", amount)
-                .setSql("balance = balance - " + amount);
+        updateWrapper.eq("account", account).ge("balance", amount).setSql("balance = balance - " + amount);
         return update(updateWrapper);
     }
 
     @Override
     public boolean addRewardPoints(Integer account, Integer points) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("account", account)
-                .setSql("reward_points = reward_points + " + points);
+        updateWrapper.eq("account", account).setSql("reward_points = reward_points + " + points);
         return update(updateWrapper);
     }
 }
