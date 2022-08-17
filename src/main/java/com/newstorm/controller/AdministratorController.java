@@ -39,6 +39,12 @@ public class AdministratorController {
         this.membershipLevelService = membershipLevelService;
     }
 
+    /**
+     * 管理员登录
+     *
+     * @param administrator 管理员实体
+     * @return token
+     */
     @PostMapping("/login")
     public JsonResult login(@RequestBody Administrator administrator) {
         String account = administrator.getAccount();
@@ -46,6 +52,12 @@ public class AdministratorController {
         return new JsonResult(administratorService.login(account, password));
     }
 
+    /**
+     * 修改会员信息
+     *
+     * @param map 会员实体以及管理员密码
+     * @return 是否修改成功
+     */
     @PostMapping("/change/user")
     public JsonResult changeUser(@RequestBody Map<String, Object> map) {
         checkIdentity();
@@ -64,6 +76,12 @@ public class AdministratorController {
         }
     }
 
+    /**
+     * 修改会员等级
+     *
+     * @param map 会员等级实体及管理员密码
+     * @return 是否修改成功
+     */
     @PostMapping("/change/membership_level")
     public JsonResult changeMembershipLevel(@RequestBody Map<String, Object> map) {
         checkIdentity();
@@ -82,16 +100,28 @@ public class AdministratorController {
         }
     }
 
+    /**
+     * 检查当前登录身份是否是管理员，若不是管理员，则抛出异常
+     */
     private void checkIdentity() {
         if (!JwtUtils.isAdministrator(request.getHeader(JwtUtils.AUTH_HEADER_KEY))) {
             throw new BaseException("您不具备管理员权限");
         }
     }
 
+    /**
+     * 获取当前管理员账号
+     *
+     * @return 管理员账号
+     */
     private String getAccount() {
         return JwtUtils.getAdministratorAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
     }
 
+    /**
+     * 检查管理员密码是否正确，若错误，则抛出异常
+     * @param password 管理员密码
+     */
     private void checkPassword(String password) {
         if (!administratorService.checkAdministratorPassword(getAccount(), password)) {
             throw new BaseException("管理员密码验证错误");
