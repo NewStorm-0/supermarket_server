@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +55,20 @@ public class ChargeController {
         Map<String, Object> condition = new HashMap<>(1);
         condition.put("user_id", account);
         return new JsonResult(chargeService.listByMap(condition));
+    }
+
+    /**
+     * 管理员获取一段日期内的充值记录
+     * @param startDate 起始日期
+     * @param endDate 截止日期
+     * @return 符合条件的充值记录
+     */
+    @GetMapping("/administrator/between")
+    public JsonResult administratorGetChargeRecordsBetweenDate(
+            @RequestParam("startDate") LocalDate startDate,
+            @RequestParam("endDate") LocalDate endDate) {
+        checkIdentity();
+        return new JsonResult(chargeService.listBetweenDate(startDate, endDate));
     }
 
     /**

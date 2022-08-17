@@ -1,32 +1,33 @@
 package com.newstorm;
 
-import com.newstorm.common.HmacUtils;
-import com.newstorm.common.JsonResult;
-import com.newstorm.common.JwtUtils;
-import com.newstorm.mapper.UserMapper;
-import com.newstorm.pojo.MembershipLevel;
-import com.newstorm.pojo.User;
-import com.newstorm.service.MembershipLevelService;
-import com.newstorm.service.UserService;
-import com.newstorm.service.impl.UserServiceImpl;
+
+import com.newstorm.pojo.Charge;
+import com.newstorm.pojo.UserOrder;
+import com.newstorm.service.ChargeService;
+import com.newstorm.service.UserOrderService;
+import com.newstorm.service.impl.UserOrderServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootTest
 class SupermarketServerApplicationTests {
+    @Autowired
+    UserOrderService userOrderService;
 
     @Test
     public void contextLoads() {
-
-
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.withDayOfMonth(1);
+        List<UserOrder> chargeList = userOrderService.listBetweenDate(startDate, endDate);
+        for (UserOrder charge : chargeList) {
+            System.out.println(charge);
+        }
     }
 
 }

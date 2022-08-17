@@ -1,5 +1,6 @@
 package com.newstorm.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newstorm.exception.BaseException;
 import com.newstorm.mapper.UserOrderMapper;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,5 +134,12 @@ public class UserOrderServiceImpl extends ServiceImpl<UserOrderMapper, UserOrder
         returnMap.put("finalPrice", finalPrice);
         returnMap.put("points", points);
         return returnMap;
+    }
+
+    @Override
+    public List<UserOrder> listBetweenDate(LocalDate startDate, LocalDate endDate) {
+        QueryWrapper<UserOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between("time", startDate, endDate);
+        return list(queryWrapper);
     }
 }

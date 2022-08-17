@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +78,28 @@ public class UserOrderController {
         return new JsonResult(getUserOrders(account));
     }
 
+
+    /**
+     * 管理员获取一段日期内的订单记录（不包含商品）
+     * @param startDate 起始日期
+     * @param endDate 截止日期
+     * @return 符合条件的订单记录
+     */
+    @GetMapping("/administrator/between")
+    public JsonResult administratorGetUserOrdersBetweenDate(
+            @RequestParam("startDate") LocalDate startDate,
+            @RequestParam("endDate") LocalDate endDate) {
+        checkIdentity();
+        return new JsonResult(userOrderService.listBetweenDate(startDate, endDate));
+    }
+
+    /**
+     * 注意！！！不是接口！！！
+     * 获取一个会员的订单记录（包含商品）
+     *
+     * @param account 会员卡号
+     * @return Map<String, List>
+     */
     private Map<String, List> getUserOrders(int account) {
         Map<String, Object> map1 = new HashMap<>(1);
         map1.put("user_id", account);
