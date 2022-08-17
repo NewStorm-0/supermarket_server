@@ -3,7 +3,7 @@ package com.newstorm.controller;
 import com.newstorm.common.JsonResult;
 import com.newstorm.common.JwtUtils;
 import com.newstorm.exception.BaseException;
-import com.newstorm.service.RedeemService;
+import com.newstorm.service.ChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/redeem")
-public class RedeemController {
+@RequestMapping("/charge")
+public class ChargeController {
     private HttpServletRequest request;
-    RedeemService redeemService;
+    ChargeService chargeService;
 
     @Autowired
     public void setRequest(HttpServletRequest request) {
@@ -24,31 +26,34 @@ public class RedeemController {
     }
 
     @Autowired
-    public void setRedeemService(RedeemService redeemService) {
-        this.redeemService = redeemService;
+    public void setChargeService(ChargeService chargeService) {
+        this.chargeService = chargeService;
     }
 
     /**
-     * 会员获取满减券兑换记录
+     * 会员获取充值记录
      *
-     * @return 该会员的满减券兑换记录
+     * @return 该会员的充值记录
      */
     @GetMapping("/user")
-    public JsonResult getRedeemRecords() {
+    public JsonResult getChargeRecords() {
         Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
-        return new JsonResult(redeemService.getUserRedeem(account));
+        Map<String, Object> condition = new HashMap<>(1);
+        condition.put("user_id", account);
+        return new JsonResult(chargeService.listByMap(condition));
     }
 
     /**
-     * 管理员获取会员满减券兑换记录
+     * 管理员获取单个会员充值记录
      *
-     * @param account 会员卡号
-     * @return 该会员的满减券兑换记录
+     * @return 该会员的充值记录
      */
     @GetMapping("/administrator")
-    public JsonResult adminGetRedeemRecords(@RequestParam("account") Integer account) {
+    public JsonResult administratorGetChargeRecords(@RequestParam("account") Integer account) {
         checkIdentity();
-        return new JsonResult(redeemService.getUserRedeem(account));
+        Map<String, Object> condition = new HashMap<>(1);
+        condition.put("user_id", account);
+        return new JsonResult(chargeService.listByMap(condition));
     }
 
     /**

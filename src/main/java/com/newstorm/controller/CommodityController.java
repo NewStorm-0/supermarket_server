@@ -90,7 +90,7 @@ public class CommodityController {
      * 检查当前登录身份是否是管理员，若不是管理员，则抛出异常
      */
     private void checkIdentity() {
-        if (!JwtUtils.isAdministrator(request.getHeader(JwtUtils.AUTH_HEADER_KEY))) {
+        if (JwtUtils.notAdministrator(request.getHeader(JwtUtils.AUTH_HEADER_KEY))) {
             throw new BaseException("您不具备管理员权限");
         }
     }

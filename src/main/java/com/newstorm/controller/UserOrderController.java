@@ -2,6 +2,7 @@ package com.newstorm.controller;
 
 import com.newstorm.common.JsonResult;
 import com.newstorm.common.JwtUtils;
+import com.newstorm.exception.BaseException;
 import com.newstorm.pojo.OrderCommodity;
 import com.newstorm.pojo.UserOrder;
 import com.newstorm.pojo.dto.CheckoutDTO;
@@ -64,6 +65,18 @@ public class UserOrderController {
         return new JsonResult(getUserOrders(account));
     }
 
+    /**
+     * 管理员查询会员订单
+     *
+     * @param account 会员卡号
+     * @return 订单信息及订单货品信息
+     */
+    @GetMapping("/administrator")
+    public JsonResult administratorGetUserOrders(@RequestParam("account") Integer account) {
+        checkIdentity();
+        return new JsonResult(getUserOrders(account));
+    }
+
     private Map<String, List> getUserOrders(int account) {
         Map<String, Object> map1 = new HashMap<>(1);
         map1.put("user_id", account);
@@ -78,5 +91,14 @@ public class UserOrderController {
         returnMap.put("UserOrderList", userOrderList);
         returnMap.put("OrderCommodityList", orderCommodityList);
         return returnMap;
+    }
+
+    /**
+     * 检查当前登录身份是否是管理员，若不是管理员，则抛出异常
+     */
+    private void checkIdentity() {
+        if (JwtUtils.notAdministrator(request.getHeader(JwtUtils.AUTH_HEADER_KEY))) {
+            throw new BaseException("您不具备管理员权限");
+        }
     }
 }

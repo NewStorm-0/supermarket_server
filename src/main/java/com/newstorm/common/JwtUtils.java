@@ -29,7 +29,7 @@ public class JwtUtils {
      */
     public static String getUserToken(User user) {
         Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.HOUR, 4);
+        instance.add(Calendar.HOUR, 48);
 
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("userAccount", user.getAccount())
@@ -41,7 +41,7 @@ public class JwtUtils {
 
     public static String getAdministratorToken(Administrator administrator) {
         Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.MINUTE, 30);
+        instance.add(Calendar.HOUR, 8);
 
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("administratorAccount", administrator.getAccount())
@@ -83,10 +83,10 @@ public class JwtUtils {
         return userLevel.asInt();
     }
 
-    public static boolean isAdministrator(String jwt) {
+    public static boolean notAdministrator(String jwt) {
         DecodedJWT decodedJWT = verify(jwt);
         Claim administratorAccount = decodedJWT.getClaim("administratorAccount");
-        return administratorAccount.asString() != null;
+        return administratorAccount.asString() == null;
     }
 
     public static String getAdministratorAccount(String jwt) {
