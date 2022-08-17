@@ -89,4 +89,10 @@ public class JwtUtils {
         return administratorAccount.asString() != null;
     }
 
+    public static String getAdministratorAccount(String jwt) {
+        DecodedJWT decodedJWT = verify(jwt);
+        Claim administratorAccount = decodedJWT.getClaim("administratorAccount");
+        return administratorAccount.asString();
+    }
+
 }

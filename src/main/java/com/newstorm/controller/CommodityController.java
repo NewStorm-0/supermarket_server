@@ -22,4 +22,9 @@ public class CommodityController {
     public JsonResult queryCommodity(@RequestParam("commodityId") Integer commodityId) {
         return new JsonResult(commodityService.getById(commodityId));
     }
+
+    @GetMapping("/all")
+    public JsonResult allCommodity() {
+        return new JsonResult(commodityService.list());
+    }
 }
