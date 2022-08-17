@@ -82,6 +82,7 @@ public class CommodityController {
     @PostMapping("/add")
     public JsonResult addCommodity(@RequestBody Commodity commodity) {
         checkIdentity();
+        commodity.setId(null);
         return commodityService.save(commodity) ? JsonResult.success()
                 : new JsonResult("添加失败");
     }

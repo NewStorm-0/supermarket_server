@@ -10,11 +10,13 @@ import com.newstorm.pojo.MembershipLevel;
 import com.newstorm.pojo.User;
 import com.newstorm.service.AdministratorService;
 import com.newstorm.service.MembershipLevelService;
+import com.newstorm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,6 +25,7 @@ public class AdministratorController {
     private HttpServletRequest request;
     AdministratorService administratorService;
     MembershipLevelService membershipLevelService;
+    UserService userService;
 
     @Autowired
     public void setRequest(HttpServletRequest request) {
@@ -37,6 +40,11 @@ public class AdministratorController {
     @Autowired
     public void setMembershipLevelService(MembershipLevelService membershipLevelService) {
         this.membershipLevelService = membershipLevelService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     /**
@@ -101,6 +109,21 @@ public class AdministratorController {
     }
 
     /**
+     * 管理员获取所有会员信息
+     *
+     * @return 所有会员实体
+     */
+    @GetMapping("/get/users")
+    public JsonResult getUsers() {
+        checkIdentity();
+        List<User> userList = userService.list();
+        for (User user : userList) {
+            user.setPassword(null);
+        }
+        return new JsonResult(userList);
+    }
+
+    /**
      * 检查当前登录身份是否是管理员，若不是管理员，则抛出异常
      */
     private void checkIdentity() {
@@ -120,6 +143,7 @@ public class AdministratorController {
 
     /**
      * 检查管理员密码是否正确，若错误，则抛出异常
+     *
      * @param password 管理员密码
      */
     private void checkPassword(String password) {
