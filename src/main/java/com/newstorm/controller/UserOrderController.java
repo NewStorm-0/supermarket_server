@@ -9,6 +9,12 @@ import com.newstorm.pojo.dto.CheckoutDTO;
 import com.newstorm.pojo.dto.OrderDTO;
 import com.newstorm.service.OrderCommodityService;
 import com.newstorm.service.UserOrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@RestController()
 @RequestMapping("/order")
 public class UserOrderController {
 
@@ -48,6 +54,16 @@ public class UserOrderController {
      * @param checkoutDTO 包含满减券以及商品信息
      * @return 结账信息，包含花费与积分
      */
+    @Operation(summary = "结账生成订单",
+            description = "根据会员卡号和商品信息、满减券生成订单",
+            parameters = {
+                    @Parameter(name = "checkoutDTO",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(anyOf = {CheckoutDTO.class})))
+            },
+            responses = {
+                    @ApiResponse(description = "返回积分与结算价格")
+            })
     @PostMapping("/checkout")
     public JsonResult checkout(@RequestBody CheckoutDTO checkoutDTO) {
         Integer account = checkoutDTO.getAccount();
@@ -60,10 +76,12 @@ public class UserOrderController {
      *
      * @return 订单信息及订单货品信息
      */
+    @Operation(summary = "会员查询自己的订单")
+    @ApiResponse(description = "订单信息及订单货品信息")
     @GetMapping("/user")
-    public JsonResult getUserOrders() {
+    public JsonResult getOrdersFromUser() {
         Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
-        return new JsonResult(getUserOrders(account));
+        return new JsonResult(getOrdersFromUser(account));
     }
 
     /**
@@ -72,19 +90,29 @@ public class UserOrderController {
      * @param account 会员卡号
      * @return 订单信息及订单货品信息
      */
+    @Operation(summary = "管理员查询会员订单")
+    @Parameter(description = "会员卡号")
+    @ApiResponse(description = "订单信息及订单货品信息")
     @GetMapping("/administrator")
     public JsonResult administratorGetUserOrders(@RequestParam("account") Integer account) {
         checkIdentity();
-        return new JsonResult(getUserOrders(account));
+        return new JsonResult(getOrdersFromUser(account));
     }
 
 
     /**
      * 管理员获取一段日期内的订单记录（不包含商品）
+     *
      * @param startDate 起始日期
-     * @param endDate 截止日期
+     * @param endDate   截止日期
      * @return 符合条件的订单记录
      */
+    @Operation(summary = "管理员获取一段日期内的订单记录（不包含商品）")
+    @Parameter(name = "startDate", description = "起始日期")
+    @Parameter(name = "endDate", description = "截止日期")
+    @ApiResponse(description = "符合条件的订单记录",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = UserOrder.class)))
     @GetMapping("/administrator/between")
     public JsonResult administratorGetUserOrdersBetweenDate(
             @RequestParam("startDate") LocalDate startDate,
@@ -100,7 +128,7 @@ public class UserOrderController {
      * @param account 会员卡号
      * @return Map<String, List>
      */
-    private Map<String, List> getUserOrders(int account) {
+    private Map<String, List> getOrdersFromUser(int account) {
         Map<String, Object> map1 = new HashMap<>(1);
         map1.put("user_id", account);
         List<UserOrder> userOrderList = userOrderService.listByMap(map1);

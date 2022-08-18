@@ -2,7 +2,12 @@ package com.newstorm.controller;
 
 import com.newstorm.common.JsonResult;
 import com.newstorm.common.JwtUtils;
+import com.newstorm.pojo.UserCoupon;
 import com.newstorm.service.UserCouponService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +38,10 @@ public class UserCouponController {
      *
      * @return 持有的满减券信息
      */
+    @Operation(summary = "会员获取持有的满减券信息")
+    @ApiResponse(description = "持有的满减券信息",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {UserCoupon.class})))
     @GetMapping("/user")
     public JsonResult getUserCoupons() {
         Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));

@@ -3,7 +3,13 @@ package com.newstorm.controller;
 import com.newstorm.common.JsonResult;
 import com.newstorm.common.JwtUtils;
 import com.newstorm.exception.BaseException;
+import com.newstorm.pojo.Redeem;
 import com.newstorm.service.RedeemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +39,10 @@ public class RedeemController {
      *
      * @return 该会员的满减券兑换记录
      */
+    @Operation(summary = "会员获取满减券兑换记录")
+    @ApiResponse(description = "该会员的满减券兑换记录",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Redeem.class})))
     @GetMapping("/user")
     public JsonResult getRedeemRecords() {
         Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
@@ -45,6 +55,11 @@ public class RedeemController {
      * @param account 会员卡号
      * @return 该会员的满减券兑换记录
      */
+    @Operation(summary = "管理员获取会员满减券兑换记录")
+    @Parameter(description = "会员卡号")
+    @ApiResponse(description = "该会员的满减券兑换记录",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Redeem.class})))
     @GetMapping("/administrator")
     public JsonResult adminGetRedeemRecords(@RequestParam("account") Integer account) {
         checkIdentity();

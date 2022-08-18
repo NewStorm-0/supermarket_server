@@ -11,6 +11,11 @@ import com.newstorm.pojo.User;
 import com.newstorm.service.AdministratorService;
 import com.newstorm.service.MembershipLevelService;
 import com.newstorm.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +58,11 @@ public class AdministratorController {
      * @param administrator 管理员实体
      * @return token
      */
+    @Operation(summary = "管理员登录")
+    @Parameter(description = "管理员实体",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Administrator.class})))
+    @ApiResponse(description = "token")
     @PostMapping("/login")
     public JsonResult login(@RequestBody Administrator administrator) {
         String account = administrator.getAccount();
@@ -66,6 +76,11 @@ public class AdministratorController {
      * @param map 会员实体以及管理员密码
      * @return 是否修改成功
      */
+    @Operation(summary = "修改会员信息")
+    @Parameter(description = "会员实体以及管理员密码",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(allOf = {User.class, String.class})))
+    @ApiResponse(description = "是否修改成功")
     @PostMapping("/change/user")
     public JsonResult changeUser(@RequestBody Map<String, Object> map) {
         checkIdentity();
@@ -90,6 +105,11 @@ public class AdministratorController {
      * @param map 会员等级实体及管理员密码
      * @return 是否修改成功
      */
+    @Operation(summary = "修改会员等级")
+    @Parameter(description = "会员等级实体及管理员密码",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(allOf = {MembershipLevel.class, String.class})))
+    @ApiResponse(description = "是否修改成功")
     @PostMapping("/change/membership_level")
     public JsonResult changeMembershipLevel(@RequestBody Map<String, Object> map) {
         checkIdentity();
@@ -113,6 +133,10 @@ public class AdministratorController {
      *
      * @return 所有会员实体
      */
+    @Operation(summary = "管理员获取所有会员信息")
+    @ApiResponse(description = "所有会员实体",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {User.class})))
     @GetMapping("/get/users")
     public JsonResult getUsers() {
         checkIdentity();

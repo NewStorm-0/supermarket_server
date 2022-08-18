@@ -24,7 +24,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         "/user/register",
                         "/membership_level/all",
                         "/order/checkout",
-                        "/administrator/login"
+                        "/administrator/login",
+                        "/swagger-ui/**",
+                        "/v3/**",
+                        "/swagger-ui.html/**",
+                        "/swagger-resources/**"
                 );
     }
 }

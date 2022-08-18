@@ -3,7 +3,13 @@ package com.newstorm.controller;
 import com.newstorm.common.JsonResult;
 import com.newstorm.common.JwtUtils;
 import com.newstorm.exception.BaseException;
+import com.newstorm.pojo.Charge;
 import com.newstorm.service.ChargeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +42,10 @@ public class ChargeController {
      *
      * @return 该会员的充值记录
      */
+    @Operation(summary = "会员获取充值记录")
+    @ApiResponse(description = "该会员的充值记录",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Charge.class})))
     @GetMapping("/user")
     public JsonResult getChargeRecords() {
         Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
@@ -47,8 +57,14 @@ public class ChargeController {
     /**
      * 管理员获取单个会员充值记录
      *
+     * @param account 会员卡号
      * @return 该会员的充值记录
      */
+    @Operation(summary = "管理员获取单个会员充值记录")
+    @Parameter(description = "会员卡号")
+    @ApiResponse(description = "该会员的充值记录",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Charge.class})))
     @GetMapping("/administrator")
     public JsonResult administratorGetChargeRecords(@RequestParam("account") Integer account) {
         checkIdentity();
@@ -59,10 +75,17 @@ public class ChargeController {
 
     /**
      * 管理员获取一段日期内的充值记录
+     *
      * @param startDate 起始日期
-     * @param endDate 截止日期
+     * @param endDate   截止日期
      * @return 符合条件的充值记录
      */
+    @Operation(summary = "管理员获取一段日期内的充值记录")
+    @Parameter(name = "startDate", description = "起始日期")
+    @Parameter(name = "endDate", description = "截止日期")
+    @ApiResponse(description = "符合条件的充值记录",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Charge.class})))
     @GetMapping("/administrator/between")
     public JsonResult administratorGetChargeRecordsBetweenDate(
             @RequestParam("startDate") LocalDate startDate,

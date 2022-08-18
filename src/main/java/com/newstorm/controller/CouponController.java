@@ -5,6 +5,11 @@ import com.newstorm.common.JwtUtils;
 import com.newstorm.exception.BaseException;
 import com.newstorm.pojo.Coupon;
 import com.newstorm.service.CouponService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +36,10 @@ public class CouponController {
      *
      * @return 所有满减券信息
      */
+    @Operation(summary = "获取所有满减券信息")
+    @ApiResponse(description = "所有满减券信息",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Coupon.class})))
     @GetMapping("/all")
     public JsonResult getCoupons() {
         return new JsonResult(couponService.list());
@@ -42,6 +51,11 @@ public class CouponController {
      * @param coupon 满减券实体
      * @return 是否添加成功
      */
+    @Operation(summary = "管理员增加满减券")
+    @Parameter(description = "满减券实体",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(anyOf = {Coupon.class})))
+    @ApiResponse(description = "是否添加成功")
     @PostMapping("/add")
     public JsonResult addCoupon(@RequestBody Coupon coupon) {
         checkIdentity();
@@ -56,6 +70,9 @@ public class CouponController {
      * @param couponId 满减券id
      * @return 是否删除成功
      */
+    @Operation(summary = "管理员删除满减券")
+    @Parameter(description = "满减券id")
+    @ApiResponse(description = "是否删除成功")
     @GetMapping("/delete")
     public JsonResult deleteCoupon(@RequestParam("couponId") Integer couponId) {
         checkIdentity();

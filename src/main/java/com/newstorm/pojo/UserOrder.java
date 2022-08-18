@@ -13,6 +13,7 @@ public class UserOrder {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer userId;
+    private Double paymentAmount;
     private Integer rewardPoints;
     private LocalDateTime time;
     private String couponInfo;

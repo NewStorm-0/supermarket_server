@@ -110,6 +110,7 @@ public class UserOrderServiceImpl extends ServiceImpl<UserOrderMapper, UserOrder
         // 插入 order 表信息
         UserOrder userOrder = new UserOrder();
         userOrder.setUserId(account);
+        userOrder.setPaymentAmount(finalPrice);
         userOrder.setRewardPoints(points);
         userOrder.setTime(LocalDateTime.now());
         userOrder.setCouponInfo(couponInfo);
