@@ -1,5 +1,6 @@
-package com.newstorm.interceptor;
+package com.newstorm.configer;
 
+import com.newstorm.interceptor.JwtInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
