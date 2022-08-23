@@ -69,7 +69,7 @@ public class AdministratorController {
         String account = administrator.getAccount();
         String password = administrator.getPassword();
         Map<String, String> map = new HashMap<>(1);
-        map.put("token", administratorService.login(account, password));
+        map.put("authorization", administratorService.login(account, password));
         return new JsonResult(map);
     }
 
