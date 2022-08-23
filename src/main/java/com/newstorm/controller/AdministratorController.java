@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,9 @@ public class AdministratorController {
     public JsonResult login(@RequestBody Administrator administrator) {
         String account = administrator.getAccount();
         String password = administrator.getPassword();
-        return new JsonResult(administratorService.login(account, password));
+        Map<String, String> map = new HashMap<>(1);
+        map.put("token", administratorService.login(account, password));
+        return new JsonResult(map);
     }
 
     /**

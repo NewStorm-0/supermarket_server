@@ -2,7 +2,6 @@ package com.newstorm.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.newstorm.pojo.Administrator;
-import com.newstorm.pojo.MembershipLevel;
 import com.newstorm.pojo.User;
 
 public interface AdministratorService extends IService<Administrator> {
