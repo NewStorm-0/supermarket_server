@@ -53,7 +53,9 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, A
     @Override
     public boolean changeUser(User user) {
         try {
-            user.setPassword(HmacUtils.encrypt(user.getPassword()));
+            if (user.getPassword() != null) {
+                user.setPassword(HmacUtils.encrypt(user.getPassword()));
+            }
             user.setBalance(null);
             user.setLevel(null);
             user.setRewardPoints(null);
