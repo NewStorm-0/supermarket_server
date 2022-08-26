@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,23 @@ public class UserCouponController {
     @GetMapping("/user")
     public JsonResult getUserCoupons() {
         Integer account = JwtUtils.getUserAccount(request.getHeader(JwtUtils.AUTH_HEADER_KEY));
+        Map<String, Object> condition = new HashMap<>(1);
+        condition.put("user_id", account);
+        return new JsonResult(userCouponService.listByMap(condition));
+    }
+
+    /**
+     * 用于生成订单前获取用户的满减券信息
+     *
+     * @param account 会员卡号
+     * @return 会员持有的满减券信息
+     */
+    @Operation(summary = "用于生成订单前获取用户的满减券信息")
+    @ApiResponse(description = "用户持有的满减券信息",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(allOf = {UserCoupon.class})))
+    @GetMapping("/get")
+    public JsonResult checkoutGetCoupons(@RequestParam("account") Integer account) {
         Map<String, Object> condition = new HashMap<>(1);
         condition.put("user_id", account);
         return new JsonResult(userCouponService.listByMap(condition));
