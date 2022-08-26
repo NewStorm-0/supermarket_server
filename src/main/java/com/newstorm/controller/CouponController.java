@@ -60,7 +60,7 @@ public class CouponController {
     public JsonResult addCoupon(@RequestBody Coupon coupon) {
         checkIdentity();
         coupon.setType(null);
-        return couponService.save(coupon) ? JsonResult.success()
+        return couponService.save(coupon) ? new JsonResult(coupon.getType())
                 : new JsonResult("添加失败");
     }
 

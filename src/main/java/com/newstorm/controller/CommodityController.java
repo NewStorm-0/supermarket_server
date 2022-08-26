@@ -110,7 +110,7 @@ public class CommodityController {
     public JsonResult addCommodity(@RequestBody Commodity commodity) {
         checkIdentity();
         commodity.setId(null);
-        return commodityService.save(commodity) ? JsonResult.success()
+        return commodityService.save(commodity) ? new JsonResult(commodity.getId())
                 : new JsonResult("添加失败");
     }
 
