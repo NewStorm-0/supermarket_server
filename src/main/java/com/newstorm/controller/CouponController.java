@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping("/coupon")
@@ -76,8 +78,12 @@ public class CouponController {
     @GetMapping("/delete")
     public JsonResult deleteCoupon(@RequestParam("couponId") Integer couponId) {
         checkIdentity();
-        return couponService.removeById(couponId) ? JsonResult.success()
-                : new JsonResult("删除失败");
+        try {
+            return couponService.removeById(couponId) ? JsonResult.success()
+                    : new JsonResult("删除失败");
+        } catch (DataIntegrityViolationException e) {
+            return new JsonResult("删除失败");
+        }
     }
 
     /**
