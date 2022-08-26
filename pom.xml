@@ -61,12 +61,6 @@
             <version>1.6.10</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-javadoc</artifactId>
-            <version>1.6.10</version>
-        </dependency>
-
     </dependencies>
 
     <build>
