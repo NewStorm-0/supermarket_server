@@ -27,6 +27,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         "/order/checkout",
                         "/administrator/login",
                         "/user_coupon/get",
+                        "/coupon/all",
+                        "/commodity/all",
                         "/swagger-ui/**",
                         "/v3/**",
                         "/swagger-ui.html/**",
